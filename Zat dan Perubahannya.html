@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zat dan Perubahannya</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+        .container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 800px;
+            margin: auto;
+            position: relative;
+        }
+        .header-main-title {
+            text-align: center;
+            margin-bottom: 5px;
+        }
+        h1 {
+            color: #0056b3;
+            margin: 0;
+            font-size: 2.2em;
+        }
+        .author-info {
+            text-align: center;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 15px;
+        }
+        .author-info p {
+            margin: 0;
+            font-size: 0.9em;
+            color: #555;
+        }
+        .author-info p:first-child {
+            font-weight: bold;
+            color: #333;
+            font-size: 1em;
+        }
+        .header-image {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 120px;
+            height: 120px;
+            object-fit: cover;
+            z-index: 10;
+        }
+        .left-header-image {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            width: 80px;
+            height: 80px;
+            border-radius: 8px;
+            object-fit: cover;
+            z-index: 10;
+        }
+        h2 {
+            color: #0056b3;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input[type="text"], input[type="number"], select {
+            width: calc(100% - 22px);
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .question {
+            margin-bottom: 20px;
+            border: 1px solid #eee;
+            padding: 15px;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+        .question p {
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .options label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: normal;
+        }
+        button {
+            background-color: #28a745;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 20px;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+        #timer {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #d9534f;
+            margin-bottom: 15px;
+            text-align: right;
+        }
+        #timeLimitDisplay {
+            text-align: right;
+            font-weight: bold;
+            margin-bottom: 5px;
+            margin-top: 50px;
+        }
+        #results {
+            margin-top: 30px;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            background-color: #e9ecef;
+            display: none;
+        }
+        .correct {
+            color: green;
+            font-weight: bold;
+        }
+        .incorrect {
+            color: red;
+            font-weight: bold;
+        }
+        .cooldown-message {
+            text-align: center;
+            font-size: 1.2em;
+            color: #d9534f;
+            margin-top: 20px;
+            padding: 15px;
+            border: 1px solid #d9534f;
+            border-radius: 5px;
+            background-color: #ffe0e0;
+        }
+        @media (max-width: 600px) {
+            .header-image, .left-header-image {
+                position: static;
+                margin: 10px auto;
+                display: block;
+            }
+            .header-main-title, .author-info {
+                text-align: center;
+            }
+            .container {
+                position: static;
+            }
+            #timeLimitDisplay {
+                margin-top: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header-main-title">
+            <h1>Zat dan Perubahannya</h1>
+        </div>
+        <div class="author-info">
+            <p>By. Torus Manuntun Nababan, S.Pd.,M.Pd</p>
+            <p>(Pengembang Soal Kuis)</p>
+        </div>
+        <img src="logo.png" alt="Foto Torus Manuntun Nababan, S.Pd.,M.Pd" class="header-image">
+        <img src="jas.jpg" alt="Ilustrasi Jas" class="left-header-image">
+
+        <p id="timeLimitDisplay">Waktu pengerjaan: <span id="timeLimit">40</span> menit</p>
+        <div id="timer">Waktu tersisa: 40:00</div>
+
+        <form id="quizForm">
+            <h2>Identitas Siswa</h2>
+            <div class="form-group">
+                <label for="sekolah">Nama Sekolah:</label>
+                <input type="text" id="sekolah" name="sekolah" required>
+            </div>
+            <div class="form-group">
+                <label for="nama">Nama Siswa:</label>
+                <input type="text" id="nama" name="nama" required>
+            </div>
+            <div class="form-group">
+                <label for="kelas">Kelas:</label>
+                <input type="text" id="kelas" name="kelas" required>
+            </div>
+            <div class="form-group">
+                <label for="semester">Semester:</label>
+                <select id="semester" name="semester" required>
+                    <option value="">Pilih Semester</option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="tahunAjaran">Tahun Ajaran:</label>
+                <input type="text" id="tahunAjaran" name="tahunAjaran" placeholder="Contoh: 2024/2025" required>
+            </div>
+
+            <hr>
+
+            <h2>Soal Kuis</h2>
+            <div id="questionsContainer">
+            </div>
+
+            <button type="submit">Selesai Kuis</button>
+        </form>
+
+        <div id="results">
+            <h2>Hasil Kuis</h2>
+            <p><strong>Nama Siswa:</strong> <span id="resultNama"></span></p>
+            <p><strong>Skor Anda:</strong> <span id="score"></span></p>
+            <p id="message"></p>
+            <h3>Detail Jawaban:</h3>
+            <div id="answerDetails">
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            // Wujud Zat dan Model Partikel (10 soal)
+            {
+                topic: "Wujud Zat dan Model Partikel",
+                question: "Bentuk zat padat adalah...",
+                options: ["Berubah-ubah", "Tetap", "Mengikuti wadah", "Tidak beraturan"],
+                answer: "Tetap"
+            },
+            {
+                topic: "Wujud Zat dan Model Partikel",
+                question: "Partikel dalam zat padat tersusun sangat...",
+                options: ["Renggang", "Acak", "Rapat", "Bebas bergerak"],
+                answer: "Rapat"
+            },
+            {
+                topic: "Wujud Zat dan Model Partikel",
+                question: "Contoh zat cair adalah...",
+                options: ["Batu", "Udara", "Air", "Besi"],
+                answer: "Air"
+            },
+            {
+                topic: "Wujud Zat dan Model Partikel",
+                question: "Bentuk zat cair akan mengikuti...",
+                options: ["Bentuk aslinya", "Bentuk tangan", "Bentuk wadahnya", "Bentuk padat"],
+                answer: "Bentuk wadahnya"
+            },
+            {
+                topic: "Wujud Zat dan Model Partikel",
+                question: "Partikel dalam zat cair dapat bergerak...",
+                options: ["Sangat bebas", "Terikat kuat", "Berpindah tempat", "Tidak bergerak"],
+                answer: "Berpindah tempat"
+            },
+            {
+                topic: "Wujud Zat dan Model Partikel",
+                question: "Zat gas mengisi seluruh ____ yang ditempatinya.",
+                options: ["Dasar", "Permukaan", "Ruangan", "Tepi"],
+                answer: "Ruangan"
+            },
+            {
+                topic: "Wujud Zat dan Model Partikel",
+                question: "Partikel dalam zat gas bergerak secara...",
+                options: ["Teratur", "Lambat", "Sangat bebas dan acak", "Diam"],
+                answer: "Sangat bebas dan acak"
+            },
+            {
+                topic: "Wujud Zat dan Model Partikel",
+                question: "Apa contoh zat gas?",
+                options: ["Es", "Minyak", "Uap air", "Garam"],
+                answer: "Uap air"
+            },
+            {
+                topic: "Wujud Zat dan Model Partikel",
+                question: "Jarak antarpartikel paling jauh ditemukan pada wujud zat...",
+                options: ["Padat", "Cair", "Gas", "Plasma"],
+                answer: "Gas"
+            },
+            {
+                topic: "Wujud Zat dan Model Partikel",
+                question: "Yang memiliki volume tetap tapi bentuk berubah adalah zat...",
+                options: ["Padat", "Cair", "Gas", "Campuran"],
+                answer: "Cair"
+            },
+
+            // Perubahan Wujud Zat (10 soal)
+            {
+                topic: "Perubahan Wujud Zat",
+                question: "Perubahan wujud dari padat menjadi cair disebut...",
+                options: ["Membeku", "Menguap", "Mencair", "Menyublim"],
+                answer: "Mencair"
+            },
+            {
+                topic: "Perubahan Wujud Zat",
+                question: "Es batu yang diletakkan di tempat terbuka akan mengalami proses...",
+                options: ["Pembekuan", "Pencairan", "Penguapan", "Pengembunan"],
+                answer: "Pencairan"
+            },
+            {
+                topic: "Perubahan Wujud Zat",
+                question: "Perubahan wujud dari cair menjadi padat disebut...",
+                options: ["Mencair", "Menguap", "Membeku", "Menyublim"],
+                answer: "Membeku"
+            },
+            {
+                topic: "Perubahan Wujud Zat",
+                question: "Air yang dimasukkan ke dalam freezer akan mengalami proses...",
+                options: ["Pencairan", "Penguapan", "Pembekuan", "Pengembunan"],
+                answer: "Pembekuan"
+            },
+            {
+                topic: "Perubahan Wujud Zat",
+                question: "Perubahan wujud dari cair menjadi gas disebut...",
+                options: ["Membeku", "Menguap", "Mencair", "Mengembun"],
+                answer: "Menguap"
+            },
+            {
+                topic: "Perubahan Wujud Zat",
+                question: "Air yang dipanaskan hingga mendidih akan mengalami proses...",
+                options: ["Mencair", "Menguap", "Membeku", "Menyublim"],
+                answer: "Menguap"
+            },
+            {
+                topic: "Perubahan Wujud Zat",
+                question: "Perubahan wujud dari gas menjadi cair disebut...",
+                options: ["Mencair", "Menguap", "Membeku", "Mengembun"],
+                answer: "Mengembun"
+            },
+            {
+                topic: "Perubahan Wujud Zat",
+                question: "Titik-titik air di pagi hari pada daun adalah contoh proses...",
+                options: ["Mencair", "Menguap", "Membeku", "Mengembun"],
+                answer: "Mengembun"
+            },
+            {
+                topic: "Perubahan Wujud Zat",
+                question: "Perubahan wujud dari padat menjadi gas tanpa melalui fase cair disebut...",
+                options: ["Mencair", "Menguap", "Menyublim", "Mengkristal"],
+                answer: "Menyublim"
+            },
+            {
+                topic: "Perubahan Wujud Zat",
+                question: "Kapur barus yang mengecil dan habis di lemari adalah contoh proses...",
+                options: ["Mencair", "Menguap", "Menyublim", "Mengkristal"],
+                answer: "Menyublim"
+            },
+
+            // Perubahan Fisika dan Kimia (10 soal)
+            {
+                topic: "Perubahan Fisika dan Kimia",
+                question: "Perubahan yang tidak menghasilkan zat baru disebut perubahan...",
+                options: ["Kimia", "Fisika", "Biologi", "Warna"],
+                answer: "Fisika"
+            },
+            {
+                topic: "Perubahan Fisika dan Kimia",
+                question: "Contoh perubahan fisika adalah...",
+                options: ["Kayu terbakar", "Besi berkarat", "Gula larut dalam air", "Nasi membusuk"],
+                answer: "Gula larut dalam air"
+            },
+            {
+                topic: "Perubahan Fisika dan Kimia",
+                question: "Perubahan yang menghasilkan zat baru disebut perubahan...",
+                options: ["Fisika", "Kimia", "Wujud", "Bentuk"],
+                answer: "Kimia"
+            },
+            {
+                topic: "Perubahan Fisika dan Kimia",
+                question: "Contoh perubahan kimia adalah...",
+                options: ["Air mendidih", "Kertas digunting", "Apel membusuk", "Es mencair"],
+                answer: "Apel membusuk"
+            },
+            {
+                topic: "Perubahan Fisika dan Kimia",
+                question: "Terbentuknya endapan adalah salah satu ciri perubahan...",
+                options: ["Fisika", "Kimia", "Bentuk", "Warna"],
+                answer: "Kimia"
+            },
+            {
+                topic: "Perubahan Fisika dan Kimia",
+                question: "Menguapnya air adalah perubahan...",
+                options: ["Kimia", "Fisika", "Warna", "Rasa"],
+                answer: "Fisika"
+            },
+            {
+                topic: "Perubahan Fisika dan Kimia",
+                question: "Kembang api yang meledak dan menghasilkan cahaya dan suara adalah perubahan...",
+                options: ["Fisika", "Kimia", "Bentuk", "Wujud"],
+                answer: "Kimia"
+            },
+            {
+                topic: "Perubahan Fisika dan Kimia",
+                question: "Pemotongan kertas menjadi bagian-bagian kecil adalah perubahan...",
+                options: ["Kimia", "Fisika", "Warna", "Bau"],
+                answer: "Fisika"
+            },
+            {
+                topic: "Perubahan Fisika dan Kimia",
+                question: "Perubahan warna, bau, atau suhu yang terjadi secara signifikan sering menjadi indikasi adanya perubahan...",
+                options: ["Fisika", "Bentuk", "Kimia", "Wujud"],
+                answer: "Kimia"
+            },
+            {
+                topic: "Perubahan Fisika dan Kimia",
+                question: "Air yang berubah menjadi es adalah perubahan...",
+                options: ["Kimia", "Fisika", "Baru", "Rasa"],
+                answer: "Fisika"
+            },
+
+            // Kerapatan Zat (10 soal)
+            {
+                topic: "Kerapatan Zat",
+                question: "Kerapatan (massa jenis) adalah perbandingan antara massa suatu benda dengan...",
+                options: ["Beratnya", "Volumenya", "Suhunya", "Panjangnya"],
+                answer: "Volumenya"
+            },
+            {
+                topic: "Kerapatan Zat",
+                question: "Rumus untuk menghitung kerapatan adalah massa dibagi...",
+                options: ["Luas", "Tinggi", "Volume", "Suhu"],
+                answer: "Volume"
+            },
+            {
+                topic: "Kerapatan Zat",
+                question: "Satuan standar internasional untuk kerapatan adalah...",
+                options: ["kg/m²", "g/cm", "kg/m³", "g/L"],
+                answer: "kg/m³"
+            },
+            {
+                topic: "Kerapatan Zat",
+                question: "Benda yang memiliki kerapatan lebih kecil dari air akan...",
+                options: ["Tenggelam", "Melayang", "Terapung", "Melebur"],
+                answer: "Terapung"
+            },
+            {
+                topic: "Kerapatan Zat",
+                question: "Benda yang memiliki kerapatan lebih besar dari air akan...",
+                options: ["Tenggelam", "Melayang", "Terapung", "Menguap"],
+                answer: "Tenggelam"
+            },
+            {
+                topic: "Kerapatan Zat",
+                question: "Contoh benda yang terapung di air adalah...",
+                options: ["Batu", "Paku", "Kayu", "Besi"],
+                answer: "Kayu"
+            },
+            {
+                topic: "Kerapatan Zat",
+                question: "Contoh benda yang tenggelam di air adalah...",
+                options: ["Gabus", "Plastik kosong", "Besi", "Balok kayu"],
+                answer: "Besi"
+            },
+            {
+                topic: "Kerapatan Zat",
+                question: "Jika dua benda memiliki massa yang sama tetapi volume berbeda, benda dengan volume yang lebih kecil akan memiliki kerapatan yang...",
+                options: ["Lebih kecil", "Sama", "Lebih besar", "Tidak dapat ditentukan"],
+                answer: "Lebih besar"
+            },
+            {
+                topic: "Kerapatan Zat",
+                question: "Mengapa kapal laut yang terbuat dari besi dapat mengapung di air?",
+                options: ["Karena besi sangat ringan", "Karena bentuknya pipih", "Karena volume air yang dipindahkan kapal lebih besar dari massa kapal", "Karena air di laut lebih padat"],
+                answer: "Karena volume air yang dipindahkan kapal lebih besar dari massa kapal"
+            },
+            {
+                topic: "Kerapatan Zat",
+                question: "Kerapatan suatu zat dipengaruhi oleh massa dan...",
+                options: ["Suhu", "Tekanan", "Volume", "Warna"],
+                answer: "Volume"
+            }
+        ];
+
+        const timeLimitInMinutes = 40;
+        let timeLeft = timeLimitInMinutes * 60; // seconds
+        let timerInterval;
+
+        const quizForm = document.getElementById('quizForm');
+        const questionsContainer = document.getElementById('questionsContainer');
+        const timerDisplay = document.getElementById('timer');
+        const resultsDiv = document.getElementById('results');
+        const resultNama = document.getElementById('resultNama');
+        const scoreDisplay = document.getElementById('score');
+        const messageDisplay = document.getElementById('message');
+        const answerDetailsDiv = document.getElementById('answerDetails');
+
+        // Durasi cooldown: 3 jam dalam milidetik
+        const cooldownDuration = 3 * 60 * 60 * 1000;
+        const lastQuizCompletionKey = 'lastQuizCompletionTime';
+
+        // Fungsi untuk mengacak array (algoritma Fisher-Yates)
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+
+        // Fungsi untuk menghasilkan dan menampilkan pertanyaan
+        function generateQuestions() {
+            // Ensure there are exactly 40 questions after potential filtering/selection
+            if (questions.length !== 40) {
+                console.warn("Jumlah soal tidak sama dengan 40. Pastikan ada 40 soal.");
+                // You might want to implement logic here to select 40 random questions if you have more
+                // For now, we'll proceed with the available questions, but this warning is important.
+            }
+            
+            shuffleArray(questions); // Shuffle all questions
+            questionsContainer.innerHTML = '';
+            questions.forEach((q, index) => {
+                const questionDiv = document.createElement('div');
+                questionDiv.classList.add('question');
+
+                const shuffledOptions = [...q.options];
+                shuffleArray(shuffledOptions);
+
+                questionDiv.innerHTML = `
+                    <p>${index + 1}. ${q.question}</p>
+                    <div class="options">
+                        ${shuffledOptions.map((option) => `
+                            <label>
+                                <input type="radio" name="q${index}" value="${option}"> ${option}
+                            </label>
+                        `).join('')}
+                    </div>
+                `;
+                questionsContainer.appendChild(questionDiv);
+            });
+        }
+
+        // Fungsi untuk memulai timer
+        function startTimer() {
+            timerInterval = setInterval(() => {
+                const minutes = Math.floor(timeLeft / 60);
+                const seconds = timeLeft % 60;
+                timerDisplay.textContent = `Waktu tersisa: ${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    alert("Waktu habis! Kuis akan otomatis disubmit.");
+                    quizForm.dispatchEvent(new Event('submit'));
+                }
+                timeLeft--;
+            }, 1000);
+        }
+
+        // Penanganan saat formulir disubmit
+        quizForm.addEventListener('submit', function(event) {
+            event.preventDefault();
+            clearInterval(timerInterval);
+
+            let totalScore = 0;
+            const pointsPerCorrect = 100 / questions.length; // Calculate points per question based on total of 40 questions
+            const maxPossibleScore = questions.length * pointsPerCorrect; // 40 * 2.5 = 100
+
+            const answers = {};
+
+            questions.forEach((q, index) => {
+                const selectedOption = document.querySelector(`input[name="q${index}"]:checked`);
+                const userAnswer = selectedOption ? selectedOption.value : null;
+                answers[`q${index}`] = userAnswer;
+
+                if (userAnswer === q.answer) {
+                    totalScore += pointsPerCorrect;
+                }
+            });
+
+            // Simpan waktu penyelesaian kuis ke Local Storage
+            localStorage.setItem(lastQuizCompletionKey, Date.now());
+
+            // Tampilkan hasil
+            resultNama.textContent = document.getElementById('nama').value;
+            scoreDisplay.textContent = `${totalScore.toFixed(2)} / ${maxPossibleScore}`;
+
+            // Tentukan pesan berdasarkan skor
+            if (totalScore >= 70) {
+                messageDisplay.textContent = "Selamat Anda Pemenang";
+                messageDisplay.style.color = "green";
+            } else {
+                messageDisplay.textContent = "Anda Belum Beruntung, Belajar Lagi Ya";
+                messageDisplay.style.color = "red";
+            }
+
+            // Tampilkan detail jawaban
+            answerDetailsDiv.innerHTML = '';
+            questions.forEach((q, index) => {
+                const userAnswer = answers[`q${index}`];
+                const detailDiv = document.createElement('p');
+                let answerStatusClass = '';
+                let userAnswerText = userAnswer !== null ? userAnswer : 'Tidak dijawab';
+
+                if (userAnswer === q.answer) {
+                    answerStatusClass = 'correct';
+                } else if (userAnswer !== null) {
+                    answerStatusClass = 'incorrect';
+                } else {
+                    answerStatusClass = '';
+                }
+
+                detailDiv.innerHTML = `
+                    <strong>${index + 1}. ${q.question}</strong><br>
+                    Jawaban Anda: <span class="${answerStatusClass}">
+                        ${userAnswerText}
+                    </span><br>
+                    Kunci Jawaban: <span class="correct">${q.answer}</span>
+                `;
+                answerDetailsDiv.appendChild(detailDiv);
+            });
+
+            quizForm.style.display = 'none';
+            resultsDiv.style.display = 'block';
+        });
+
+        // Inisialisasi kuis dan cek cooldown saat halaman dimuat
+        window.onload = function() {
+            const lastCompletionTime = localStorage.getItem(lastQuizCompletionKey);
+            if (lastCompletionTime) {
+                const timeElapsed = Date.now() - parseInt(lastCompletionTime);
+                if (timeElapsed < cooldownDuration) {
+                    const remainingTime = cooldownDuration - timeElapsed;
+                    const minutes = Math.floor(remainingTime / (1000 * 60));
+                    const seconds = Math.floor((remainingTime % (1000 * 60)) / 1000);
+
+                    quizForm.style.display = 'none';
+                    timerDisplay.style.display = 'none';
+                    document.getElementById('timeLimitDisplay').style.display = 'none';
+                    const cooldownMessageDiv = document.createElement('div');
+                    cooldownMessageDiv.classList.add('cooldown-message');
+                    cooldownMessageDiv.innerHTML = `
+                        Anda telah menyelesaikan kuis ini. <br>
+                        Silakan coba lagi dalam **${minutes.toString().padStart(2, '0')} menit dan ${seconds.toString().padStart(2, '0')} detik**.
+                    `;
+                    document.querySelector('.container').insertBefore(cooldownMessageDiv, document.getElementById('quizForm'));
+                    return;
+                }
+            }
+            // Jika tidak ada cooldown atau cooldown sudah berakhir, inisialisasi kuis
+            generateQuestions();
+            startTimer();
+        };
+    </script>
+</body>
+</html>
